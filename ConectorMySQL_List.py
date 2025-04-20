@@ -5,10 +5,10 @@ from office365.runtime.auth.user_credential import UserCredential
 
 # === Conexão com o banco MySQL ===
 conn = mysql.connector.connect(
-    host="127.0.0.1",
-    user="root",
-    password="38724300",
-    database="herois_universo"
+    host="",
+    user="",
+    password="",
+    database=""
 )
 cursor = conn.cursor()
 cursor.execute("SELECT nome_alter_ego, genero, raca FROM alter_egos")
@@ -16,9 +16,9 @@ dados = cursor.fetchall()
 df_mysql = pd.DataFrame(dados, columns=["Title", "Genero", "Raca"])
 
 # === Conexão com SharePoint ===
-site_url = "https://7g7d7p.sharepoint.com/sites/XscientGroup"
-username = "franciscolomas@xscient.com.br"
-password = "Xscient@"
+site_url = ""
+username = ""
+password = ""
 lista_nome = "Nomes_Herois"
 
 try:
