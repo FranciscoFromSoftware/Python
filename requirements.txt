@@ -6,5 +6,4 @@ pandas
 matplotlib
 seaborn
 plotly
-urllib
-io
+
