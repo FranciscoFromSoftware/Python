@@ -7,12 +7,6 @@ import urllib.request
 # Configuração para usar a largura total da página
 st.set_page_config(layout="wide")
 
-# Título principal da nossa dashboard
-st.title("Dashboard de População com Localização")
-
-# Texto abaixo do título
-st.write("Visão geral das métricas e visualizações da população por município com informações de localização.")
-
 # URLs das planilhas
 url_populacao = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTRajrcbWpLzBRpPAc4ffQba8yYwnyS7HaSmq98Hid9y8WBBW7nBJpyYkmHKMMoiDu4CvHv6v7Onm07/pub?output=csv"
 url_lat_lon = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRns5zrdUDwA4__xZCSoEquLiktvp-1DgDlbl9WxW9eKtuBk7ef6fQcPzVmhw305wST8iGJxksAi6U0/pub?gid=1077836227&single=true&output=csv"
@@ -62,20 +56,17 @@ if df_lat_lon is not None:
     df_lat_lon_processed['Município'] = clean_text(df_lat_lon_processed['Município'])
     df_lat_lon_processed['MergeKey'] = df_lat_lon_processed['Município'] + ' ' + df_lat_lon_processed['UF']
 
+# Adicione o header com título e filtro lado a lado
+cols_header = st.columns([0.7, 0.3])
+with cols_header[0]:
+    st.markdown("<h2 style='font-size: 28px; font-weight: bold; color: #2E3B4E; text-align: left;'>Dashboard de População do Brasil</h2>", unsafe_allow_html=True)
+with cols_header[1]:
+    ano_selecionado = st.selectbox("", anos_disponiveis, index=len(anos_disponiveis) - 1)
+
 # Container para o filtro e mapa
 map_container = st.container()
 
 with map_container:
-    st.subheader("Mapa da População por Município")
-
-    # Define o tamanho do selectbox com base no número de anos
-    num_anos = len(anos_disponiveis)
-    largura_relativa = min(num_anos * 0.05, 0.8)  # Ajuste o fator 0.05 conforme necessário
-    col_filtro = st.columns([largura_relativa, 1 - largura_relativa])[0]
-
-    with col_filtro:
-        ano_selecionado = st.selectbox("Selecione o Ano", anos_disponiveis, index=len(anos_disponiveis) - 1)
-
     # Filtrando os dados para o ano selecionado
     df_pop_filtrado_ano = df_pop_completo[df_pop_completo['Ano'] == int(ano_selecionado)]
 
@@ -142,7 +133,11 @@ with map_container:
 
     with col1:
         st.markdown(f"""
-            <div style='background: linear-gradient(to right, #1e3a8a, #047a60); color: white; padding: 15px; border-radius: 5px;'>
+            <div style='background: linear-gradient(to right, #024053, #499c70);
+                        color: white; height: 130px; 
+                        padding: 15px; border-radius: 5px;
+                        display: flex; flex-direction: column; justify-content: left;
+                        align-items: left; text-align: left;'>
                 <h3 style='font-size: 1em; margin-bottom: 5px;'>População Total ({ano_selecionado})</h3>
                 <p style='font-size: 1.2em; margin-top: 0;'>{total_populacao_ano:,.0f}</p>
             </div>
@@ -150,7 +145,11 @@ with map_container:
 
     with col2:
         st.markdown(f"""
-            <div style='background: linear-gradient(to right, #1e3a8a, #047a60); color: white; padding: 15px; border-radius: 5px;'>
+            <div style='background: linear-gradient(to right,  #024053, #499c70);
+                        color: white; height: 130px;
+                        padding: 15px; border-radius: 5px;
+                        display: flex; flex-direction: column; justify-content: left;
+                        align-items: left; text-align: left;'>
                 <h3 style='font-size: 1em; margin-bottom: 5px;'>Cresc. Médio Anual (até {ano_selecionado})</h3>
                 <p style='font-size: 1.2em; margin-top: 0;'>{crescimento_medio_anual_pct_ano:.2f}%</p>
             </div>
@@ -158,15 +157,23 @@ with map_container:
 
     with col3:
         st.markdown(f"""
-            <div style='background: linear-gradient(to right, #1e3a8a, #047a60); color: white; padding: 15px; border-radius: 5px;'>
-                <h3 style='font-size: 0.9em; margin-bottom: 5px;'>Maior Cresc. (%) ({ano_selecionado} vs {ano_anterior_selecionado if ano_anterior_selecionado else 'anterior'})</h3>
+            <div style='background: linear-gradient(to right,  #024053, #499c70);
+                        color: white; height: 130px; 
+                        padding: 15px; border-radius: 5px;
+                        display: flex; flex-direction: column; justify-content: left;
+                        align-items: left; text-align: left;'>
+                <h3 style='font-size: 0.7em; margin-bottom: 5px;'>Maior Cresc. (%) ({ano_selecionado} vs {ano_anterior_selecionado if ano_anterior_selecionado else 'anterior'})</h3>
                 <p style='font-size: 1.1em; margin-top: 0;'>{maior_crescimento_pct_ano_selecionado}</p>
             </div>
         """, unsafe_allow_html=True)
 
     with col4:
         st.markdown(f"""
-            <div style='background: linear-gradient(to right, #1e3a8a, #047a60); color: white; padding: 15px; border-radius: 5px;'>
+            <div style='background: linear-gradient(to right,  #024053, #499c70);
+                        color: white; height: 130px; 
+                        padding: 15px; border-radius: 5px;
+                        display: flex; flex-direction: column; justify-content: left;
+                        align-items: left; text-align: left;'>
                 <h3 style='font-size: 0.9em; margin-bottom: 5px;'>Maior Cresc. Médio (%) (até {ano_selecionado})</h3>
                 <p style='font-size: 1.1em; margin-top: 0;'>{maior_crescimento_medio_pct_ate_ano}</p>
             </div>
@@ -187,7 +194,11 @@ with map_container:
             df_map_data['Longitude'] = pd.to_numeric(df_map_data['Longitude'], errors='coerce')
 
             if not df_map_data.empty:
-                st.subheader(f"Mapa da População por Município em {ano_selecionado}")
+                st.markdown(f"""
+                    <div style="background: linear-gradient(to right,  #fcbb45, #1c6144); color: #2E3B4E; font-size: 16px; padding: 5px; border-radius: 5px; text-align: left; width: 30%; margin-top: 20px; margin-bottom: 10px;">
+                        Mapa Atualizado da População - Ano {ano_selecionado}
+                    </div>
+                """, unsafe_allow_html=True)
                 fig_map = px.scatter_mapbox(df_map_data,
                                             lat="Latitude",
                                             lon="Longitude",
@@ -195,11 +206,19 @@ with map_container:
                                             color="Pessoas",
                                             hover_name="Município",
                                             hover_data={'Pessoas': ':,.0f', 'Latitude': True, 'Longitude': True},
-                                            color_continuous_scale='magma',
-                                            size_max=22,
+                                            color_continuous_scale='Viridis',
+                                            size_max=80,
                                             zoom=3.5,
                                             height=600)
-                fig_map.update_layout(mapbox_style="carto-darkmatter",
-                                      margin={"r": 0, "t": 30, "l": 0, "b": 0})
-                st.plotly_chart(fig_map, use_container_width=True)
-            
+                fig_map.update_layout(
+                    mapbox={
+                        "style": "carto-darkmatter",
+                        "center": {"lat": -15.79, "lon": -47.88},
+                        "zoom": 3.5,
+                        "pitch": 45,
+                        "bearing": 0
+                    },
+                    margin={"r": 0, "t": 0, "l": 0, "b": 0}
+                )
+                st.plotly_chart(fig_map, use_container_width=True, config={'scrollZoom': True})
+
