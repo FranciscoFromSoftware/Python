@@ -56,27 +56,33 @@ if df_lat_lon is not None:
     df_lat_lon_processed['Município'] = clean_text(df_lat_lon_processed['Município'])
     df_lat_lon_processed['MergeKey'] = df_lat_lon_processed['Município'] + ' ' + df_lat_lon_processed['UF']
 
-# Adicione o header com título e filtro lado a lado
-cols_header = st.columns([0.7, 0.3])
+# Adicione o header com título e filtros lado a lado
+cols_header = st.columns([0.4, 0.3, 0.3])
 with cols_header[0]:
     st.markdown("<h2 style='font-size: 28px; font-weight: bold; color: #2E3B4E; text-align: left;'>Dashboard de População do Brasil</h2>", unsafe_allow_html=True)
 with cols_header[1]:
-    ano_selecionado = st.selectbox("", anos_disponiveis, index=len(anos_disponiveis) - 1)
+    ano_selecionado = st.selectbox("Selecione o Ano", anos_disponiveis, index=len(anos_disponiveis) - 1)
+with cols_header[2]:
+    ufs_disponiveis = sorted(df_pop_completo['UF'].unique()) if df_pop_completo is not None else []
+    uf_selecionada = st.selectbox("Selecione a UF", ["Todas"] + ufs_disponiveis)
 
 # Container para o filtro e mapa
 map_container = st.container()
 
 with map_container:
-    # Filtrando os dados para o ano selecionado
-    df_pop_filtrado_ano = df_pop_completo[df_pop_completo['Ano'] == int(ano_selecionado)]
-
-    # Cálculo das métricas filtradas pelo ano
+    # Novo: aplicar filtro de UF nas medidas
+    df_pop_completo_filtered = df_pop_completo if uf_selecionada == "Todas" else df_pop_completo[df_pop_completo['UF'] == uf_selecionada]
+    
+    # Filtrando os dados para o ano selecionado usando o dataset filtrado por UF
+    df_pop_filtrado_ano = df_pop_completo_filtered[df_pop_completo_filtered['Ano'] == int(ano_selecionado)]
+    
+    # Cálculo das métricas filtradas pelo ano (usando o dataset filtrado por UF)
     total_populacao_ano = df_pop_filtrado_ano['Pessoas'].sum() if not df_pop_filtrado_ano.empty else 0
 
     crescimento_medio_anual_pct_ano = 0
     anos_para_media = sorted([ano for ano in anos_disponiveis if ano <= int(ano_selecionado)])
     if len(anos_para_media) > 1:
-        df_pop_filtrado_ate_ano = df_pop_completo[df_pop_completo['Ano'].isin(anos_para_media)]
+        df_pop_filtrado_ate_ano = df_pop_completo_filtered[df_pop_completo_filtered['Ano'].isin(anos_para_media)]
         df_pop_pivot_ano = df_pop_filtrado_ate_ano.pivot_table(index=['Município', 'UF'], columns='Ano', values='Pessoas').reset_index()
         df_pop_pivot_ano['Crescimento_Pct'] = 0.0
         for i in range(len(anos_para_media) - 1):
@@ -96,7 +102,7 @@ with map_container:
             index_ano_selecionado = anos_ordenados.index(int(ano_selecionado))
             if index_ano_selecionado > 0:
                 ano_anterior_selecionado = anos_ordenados[index_ano_selecionado - 1]
-                df_crescimento_pct_ano_selecionado_df = df_pop_completo[df_pop_completo['Ano'].isin([ano_anterior_selecionado, int(ano_selecionado)])].pivot_table(
+                df_crescimento_pct_ano_selecionado_df = df_pop_completo_filtered[df_pop_completo_filtered['Ano'].isin([ano_anterior_selecionado, int(ano_selecionado)])].pivot_table(
                     index=['Município', 'UF'], columns='Ano', values='Pessoas'
                 ).reset_index()
                 df_crescimento_pct_ano_selecionado_df = df_crescimento_pct_ano_selecionado_df[df_crescimento_pct_ano_selecionado_df[ano_anterior_selecionado] != 0].copy()
@@ -107,10 +113,9 @@ with map_container:
         except ValueError:
             pass
 
-    # Cálculo do maior crescimento médio percentual ATÉ o ano selecionado
     maior_crescimento_medio_pct_ate_ano = "Sem dados"
     if len(anos_para_media) > 1:
-        df_pop_filtrado_ate_ano_pivot = df_pop_completo[df_pop_completo['Ano'].isin(anos_para_media)].pivot_table(
+        df_pop_filtrado_ate_ano_pivot = df_pop_completo_filtered[df_pop_completo_filtered['Ano'].isin(anos_para_media)].pivot_table(
             index=['Município', 'UF'], columns='Ano', values='Pessoas'
         ).reset_index()
         df_pop_filtrado_ate_ano_pivot['Crescimento_Acumulado_Pct'] = 0.0
@@ -121,10 +126,10 @@ with map_container:
             if not df_pop_filtrado_ate_ano_pivot.empty:
                 df_pop_filtrado_ate_ano_pivot['Cresc_Ano_Pct'] = ((df_pop_filtrado_ate_ano_pivot[ano_atual] - df_pop_filtrado_ate_ano_pivot[ano_anterior]) / df_pop_filtrado_ate_ano_pivot[ano_anterior]) * 100
                 df_pop_filtrado_ate_ano_pivot['Crescimento_Acumulado_Pct'] += df_pop_filtrado_ate_ano_pivot['Cresc_Ano_Pct']
-
+    
         df_pop_filtrado_ate_ano_pivot['Crescimento_Medio_Pct'] = df_pop_filtrado_ate_ano_pivot['Crescimento_Acumulado_Pct'] / (len(anos_para_media) - 1) if (len(anos_para_media) - 1) > 0 else 0
         if not df_pop_filtrado_ate_ano_pivot.empty and not df_pop_filtrado_ate_ano_pivot['Crescimento_Medio_Pct'].empty:
-            maior_crescimento_medio_ate_ano_row = df_pop_filtrado_ate_ano_pivot.nlargest(1, 'Crescimento_Medio_Pct')[['Município', 'Crescimento_Medio_Pct']].iloc[0] if not df_pop_filtrado_ate_ano_pivot.empty else None
+            maior_crescimento_medio_ate_ano_row = df_pop_filtrado_ate_ano_pivot.nlargest(1, 'Crescimento_Medio_Pct')[['Município', 'Crescimento_Medio_Pct']].iloc[0]
             if maior_crescimento_medio_ate_ano_row is not None:
                 maior_crescimento_medio_pct_ate_ano = f"{maior_crescimento_medio_ate_ano_row['Município']} ({maior_crescimento_medio_ate_ano_row['Crescimento_Medio_Pct']:.2f}%)"
 
@@ -134,48 +139,48 @@ with map_container:
     with col1:
         st.markdown(f"""
             <div style='background: linear-gradient(to right, #024053, #499c70);
-                        color: white; height: 130px; 
+                        color: white; height: 100px; 
                         padding: 15px; border-radius: 5px;
                         display: flex; flex-direction: column; justify-content: left;
                         align-items: left; text-align: left;'>
-                <h3 style='font-size: 1em; margin-bottom: 5px;'>População Total ({ano_selecionado})</h3>
-                <p style='font-size: 1.2em; margin-top: 0;'>{total_populacao_ano:,.0f}</p>
+                <h3 style='font-size: 0.7em; margin-bottom: 0px;'>População Total ({ano_selecionado})</h3>
+                <p style='font-size: 1.1em; margin-top: -1;'>{total_populacao_ano:,.0f}</p>
             </div>
         """, unsafe_allow_html=True)
 
     with col2:
         st.markdown(f"""
             <div style='background: linear-gradient(to right,  #024053, #499c70);
-                        color: white; height: 130px;
+                        color: white; height: 100px;
                         padding: 15px; border-radius: 5px;
                         display: flex; flex-direction: column; justify-content: left;
                         align-items: left; text-align: left;'>
-                <h3 style='font-size: 1em; margin-bottom: 5px;'>Cresc. Médio Anual (até {ano_selecionado})</h3>
-                <p style='font-size: 1.2em; margin-top: 0;'>{crescimento_medio_anual_pct_ano:.2f}%</p>
+                <h3 style='font-size: 0.7em; margin-bottom: 0px;'>Cresc. Médio Anual (até {ano_selecionado})</h3>
+                <p style='font-size: 1.1rem; margin-top: -1;'>{crescimento_medio_anual_pct_ano:.2f}%</p>
             </div>
         """, unsafe_allow_html=True)
 
     with col3:
         st.markdown(f"""
             <div style='background: linear-gradient(to right,  #024053, #499c70);
-                        color: white; height: 130px; 
+                        color: white; height: 100px; 
                         padding: 15px; border-radius: 5px;
                         display: flex; flex-direction: column; justify-content: left;
                         align-items: left; text-align: left;'>
-                <h3 style='font-size: 0.7em; margin-bottom: 5px;'>Maior Cresc. (%) ({ano_selecionado} vs {ano_anterior_selecionado if ano_anterior_selecionado else 'anterior'})</h3>
-                <p style='font-size: 1.1em; margin-top: 0;'>{maior_crescimento_pct_ano_selecionado}</p>
+                <h3 style='font-size: 0.7em; margin-bottom: 0px;'>Maior Cresc. (%) ({ano_selecionado} vs {ano_anterior_selecionado if ano_anterior_selecionado else 'anterior'})</h3>
+                <p style='font-size: 80%; margin-top: -1;'>{maior_crescimento_pct_ano_selecionado}</p>
             </div>
         """, unsafe_allow_html=True)
 
     with col4:
         st.markdown(f"""
             <div style='background: linear-gradient(to right,  #024053, #499c70);
-                        color: white; height: 130px; 
+                        color: white; height: 100px; 
                         padding: 15px; border-radius: 5px;
                         display: flex; flex-direction: column; justify-content: left;
                         align-items: left; text-align: left;'>
-                <h3 style='font-size: 0.9em; margin-bottom: 5px;'>Maior Cresc. Médio (%) (até {ano_selecionado})</h3>
-                <p style='font-size: 1.1em; margin-top: 0;'>{maior_crescimento_medio_pct_ate_ano}</p>
+                <h3 style='font-size: 0.7em; margin-bottom: 0px;'>Maior Cresc. Médio (%) (até {ano_selecionado})</h3>
+                <p style='font-size: 80%; margin-top: 0;'>{maior_crescimento_medio_pct_ate_ano}</p>
             </div>
         """, unsafe_allow_html=True)
 
@@ -188,6 +193,10 @@ with map_container:
     if df_pop_filtrado_mapa is not None and df_lat_lon_processed is not None:
         df_map_data = pd.merge(df_lat_lon_processed, df_pop_filtrado_mapa[['MergeKey', 'Pessoas']], on='MergeKey', how='left')
 
+        # Novo: Filtrar por UF, se selecionado
+        if uf_selecionada != "Todas":
+            df_map_data = df_map_data[df_map_data['UF'] == uf_selecionada]
+
         # Converter 'Latitude' e 'Longitude' para numérico ANTES de plotar
         if df_map_data is not None:
             df_map_data['Latitude'] = pd.to_numeric(df_map_data['Latitude'], errors='coerce')
@@ -195,21 +204,24 @@ with map_container:
 
             if not df_map_data.empty:
                 st.markdown(f"""
-                    <div style="background: linear-gradient(to right,  #fcbb45, #1c6144); color: #2E3B4E; font-size: 16px; padding: 5px; border-radius: 5px; text-align: left; width: 30%; margin-top: 20px; margin-bottom: 10px;">
+                    <div style="background: linear-gradient(to right,  #fcbb45, #1c6144); color: #2E3B4E; font-size: 16px; padding: 5px; border-radius: 5px; text-align: left; width: 35%; margin-top: 20px; margin-bottom: 10px;">
                         Mapa Atualizado da População - Ano {ano_selecionado}
                     </div>
                 """, unsafe_allow_html=True)
-                fig_map = px.scatter_mapbox(df_map_data,
-                                            lat="Latitude",
-                                            lon="Longitude",
-                                            size="Pessoas",
-                                            color="Pessoas",
-                                            hover_name="Município",
-                                            hover_data={'Pessoas': ':,.0f', 'Latitude': True, 'Longitude': True},
-                                            color_continuous_scale='Viridis',
-                                            size_max=80,
-                                            zoom=3.5,
-                                            height=600)
+                fig_map = px.scatter_mapbox(
+                    df_map_data,
+                    lat="Latitude",
+                    lon="Longitude",
+                    size="Pessoas",
+                    color="Pessoas",
+                    hover_name="Município",
+                    hover_data={'Pessoas': ':,.0f', 'Latitude': True, 'Longitude': True},
+                    color_continuous_scale='Viridis',
+                    range_color=[0, 2000000],  # Escala ajustada para cidades com até 2 milhões
+                    size_max=50,
+                    zoom=3.5,
+                    height=600
+                )
                 fig_map.update_layout(
                     mapbox={
                         "style": "carto-darkmatter",
