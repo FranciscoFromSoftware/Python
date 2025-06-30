@@ -409,7 +409,7 @@ def visualizar_dashboards_com_enter(urls, intervalo_segundos=60, driver_path='ms
 
 # --- SUAS DASHBOARDS (PÁGINAS DE RELATÓRIO) AQUI ---
 powerbi_dashboard_urls = [
-    "https://app.powerbi.com/reportEmbed?reportId=4f3676e5-ac8c-4d39-82e8-90bddfecc24f&autoAuth=true&ctid=64b24d88-5884-4844-8bfa-c071c98c6521&filterPaneEnabled=false&navContentPaneEnabled=false"
+    "https://app.powerbi.com/view?r=eyJrIjoiMGZhMDVhMzAtNTZkNy00OWMwLWJiNTgtNWY5ZWE2YjE4YjgxIiwidCI6IjY0YjI0ZDg4LTU4ODQtNDg0NC04YmZhLWMwNzFjOThjNjUyMSJ9&filterPaneEnabled=false&navContentPaneEnabled=false"
 ]
     # Adicione mais links de páginas do seu relatório aqui, seguindo o mesmo padrão!
 
