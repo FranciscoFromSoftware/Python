@@ -51,85 +51,48 @@ def realizar_interacoes_dashboard(driver, url_atual):
     """
     print(f"Tentando realizar interacoes na dashboard: {url_atual}")
 
-    # === PRIMEIRO CLIQUE ===
-    # Elemento: <div aria-label='Navegação na página . Dados População Painel'> dentro de <transform data-testid='visual-container'>
-    selector_first_element = "//transform[@data-testid='visual-container']//div[@aria-label='Navegação na página . Dados População Painel']"
-    try:
-        element_to_click_1 = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, selector_first_element))
-        )
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element_to_click_1)
+    # **SELETOR PARA O SPINNER DO POWER BI**
+    # Este seletor pode precisar ser ajustado. Inspecione o HTML quando a página estiver carregando.
+    # Procure por divs ou outros elementos que indiquem "carregando".
+    SPINNER_SELECTOR = (By.CSS_SELECTOR, "div.powerbi-spinner[data-testid='spinner']")
+    
+    if "reportId=4f3676e5-ac8c-4d39-82e8-90bddfecc24f" in url_atual: 
+        print("Interagindo com a dashboard (reportId=4f3676e5-ac8c-4d39-82e8-90bddfecc24f)...")
         try:
-            ActionChains(driver).move_to_element(element_to_click_1).double_click().perform()
-            print("Duplo clique realizado no visual-container com aria-label específico.")
-        except Exception as e:
-            print(f"Duplo clique ActionChains falhou: {e}. Tentando dois cliques simples via JavaScript...")
+            # --- PRIMEIRO CLIQUE ---
+            print("Tentando clicar no tile do container9e609888-f796-bd52-6232-d7ed0bbfd3fa...")
+            selector_first_tile = "//*[name()='g' and @id='container9e609888-f796-bd52-6232-d7ed0bbfd3fa']/*[name()='g' and @class='tile' and @cursor='pointer']"
             try:
-                driver.execute_script("arguments[0].click();", element_to_click_1)
-                time.sleep(0.2)
-                driver.execute_script("arguments[0].click();", element_to_click_1)
-                print("Dois cliques simples via JavaScript realizados no visual-container.")
-            except Exception as e2:
-                print(f"Também falhou via JavaScript: {e2}")
-    except Exception as e:
-        print(f"Não foi possível encontrar ou clicar no visual-container: {e}")
-    time.sleep(5)
+                element_to_click_1 = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, selector_first_tile))
+                )
+                element_to_click_1.click()
+                print("Clique realizado no primeiro tile.")
+            except Exception as e:
+                print(f"Não foi possível clicar no primeiro tile: {e}")
+            time.sleep(5)
 
-    # === SEGUNDO CLIQUE ===
-    # Elemento: <g id='container03dbb183-4402-afb1-cac3-33078831b513'>
-    selector_second_element = "//g[@id='container03dbb183-4402-afb1-cac3-33078831b513']"
-    try:
-        element_to_click_2 = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, selector_second_element))
-        )
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element_to_click_2)
-        try:
-            ActionChains(driver).move_to_element(element_to_click_2).double_click().perform()
-            print("Duplo clique realizado no segundo elemento <g> pelo id.")
-        except Exception as e:
-            print(f"Duplo clique ActionChains falhou: {e}. Tentando dois cliques simples via JavaScript...")
+            # --- SEGUNDO CLIQUE ---
+            print("Tentando clicar no tile do containera0f15145-f3de-0b6e-5688-53b57360677e...")
+            selector_second_tile = "//*[name()='g' and @id='containera0f15145-f3de-0b6e-5688-53b57360677e']/*[name()='g' and @class='tile' and @cursor='pointer']"
             try:
-                driver.execute_script("arguments[0].click();", element_to_click_2)
-                time.sleep(0.2)
-                driver.execute_script("arguments[0].click();", element_to_click_2)
-                print("Dois cliques simples via JavaScript realizados no segundo elemento <g>.")
-            except Exception as e2:
-                print(f"Também falhou via JavaScript: {e2}")
-    except Exception as e:
-        print(f"Não foi possível encontrar ou clicar no segundo elemento <g>: {e}")
-    time.sleep(2)
+                element_to_click_2 = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, selector_second_tile))
+                )
+                element_to_click_2.click()
+                print("Clique realizado no segundo tile.")
+            except Exception as e:
+                print(f"Não foi possível clicar no segundo tile: {e}")
+            time.sleep(5)
 
-    # === TERCEIRA INTERAÇÃO: CLICA NO GRUPO <g class='tile'> PAI DO PATH ===
-    # Elemento: <g class='tile'> que contém o <path data-sub-selection-object-name='tile_default' data-sub-selection-display-name='Card_Background_Color'>
-    selector_tile_group = "//g[@class='tile' and path[@data-sub-selection-object-name='tile_default' and @data-sub-selection-display-name='Card_Background_Color']]"
-    elements_found_tile = driver.find_elements(By.XPATH, selector_tile_group)
-    print(f"Encontrados {len(elements_found_tile)} elementos para o terceiro clique.")
-    for idx, el in enumerate(elements_found_tile):
-        print(f"Elemento {idx+1}: exibido={{el.is_displayed()}}, habilitado={{el.is_enabled()}}")
-    if not elements_found_tile:
-        with open('debug_dashboard.html', 'w', encoding='utf-8') as f:
-            f.write(driver.page_source)
-        print('HTML da página salvo em debug_dashboard.html')
+            # --- TERCEIRO CLIQUE (opcional, se necessário) ---
+            # Adicione aqui se precisar de mais interações
+
+        except Exception as e:
+            print(f"Erro geral durante as interações na dashboard: {e}")
+
     else:
-        try:
-            element_to_click_tile = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.XPATH, selector_tile_group))
-            )
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element_to_click_tile)
-            ActionChains(driver).move_to_element(element_to_click_tile).double_click().perform()
-            print("Duplo clique realizado no grupo <g class='tile'> do SVG.")
-        except Exception as e:
-            print(f"Não foi possível dar duplo clique no grupo <g class='tile'>: {e}")
-            # Tenta via JavaScript
-            try:
-                driver.execute_script("arguments[0].click();", element_to_click_tile)
-                print("Clique via JavaScript realizado no grupo <g class='tile'>.")
-            except Exception as e2:
-                print(f"Também falhou via JavaScript: {e2}")
-        time.sleep(2)
-
-    # --- TERCEIRO CLIQUE (opcional, se necessário) ---
-    # Adicione aqui se precisar de mais interações
+        print("Nenhuma interação específica configurada para esta dashboard.")
 
 
 def visualizar_dashboards_com_enter(urls, intervalo_segundos=60, driver_path='msedgedriver.exe', zoom_level=100):
