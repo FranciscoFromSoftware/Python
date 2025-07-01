@@ -51,254 +51,85 @@ def realizar_interacoes_dashboard(driver, url_atual):
     """
     print(f"Tentando realizar interacoes na dashboard: {url_atual}")
 
-    # **SELETOR PARA O SPINNER DO POWER BI**
-    # Este seletor pode precisar ser ajustado. Inspecione o HTML quando a página estiver carregando.
-    # Procure por divs ou outros elementos que indiquem "carregando".
-    SPINNER_SELECTOR = (By.CSS_SELECTOR, "div.powerbi-spinner[data-testid='spinner']")
-    
-    if "reportId=4f3676e5-ac8c-4d39-82e8-90bddfecc24f" in url_atual: 
-        print("Interagindo com a dashboard (reportId=4f3676e5-ac8c-4d39-82e8-90bddfecc24f)...")
+    # === PRIMEIRO CLIQUE ===
+    # Elemento: <div aria-label='Navegação na página . Dados População Painel'> dentro de <transform data-testid='visual-container'>
+    selector_first_element = "//transform[@data-testid='visual-container']//div[@aria-label='Navegação na página . Dados População Painel']"
+    try:
+        element_to_click_1 = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, selector_first_element))
+        )
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element_to_click_1)
         try:
-            # --- PRIMEIRO CLIQUE (Navegação na página . Dados População Painel) ---
-            print("Tentando clicar no primeiro elemento (card de navegação para População Painel)...")
-            selector_first_element_div = "//div[@aria-label='Navegação na página . Dados População Painel']"
-            selector_first_element_path = "//div[@aria-label='Navegação na página . Dados População Painel']//path[@data-sub-selection-object-name='tile_default']"
-            
-            try:
-                # Tenta o DIV pai
-                element_to_click_1 = WebDriverWait(driver, 20).until(
-                    EC.element_to_be_clickable((By.XPATH, selector_first_element_div))
-                )
-                element_to_click_1.click()
-                print(f"Clicou no primeiro elemento (DIV pai) com seletor: {selector_first_element_div}")
-                
-            except (TimeoutException, NoSuchElementException, ElementClickInterceptedException) as e_div:
-                print(f"Não conseguiu clicar no DIV pai do primeiro elemento diretamente ou foi interceptado: {e_div}")
-                print("Tentando clicar no PATH do primeiro elemento...")
-                try:
-                    # Tenta o PATH
-                    element_to_click_1 = WebDriverWait(driver, 15).until(
-                        EC.element_to_be_clickable((By.XPATH, selector_first_element_path))
-                    )
-                    element_to_click_1.click()
-                    print(f"Clicou no primeiro elemento (PATH) com seletor: {selector_first_element_path}")
-                except (TimeoutException, NoSuchElementException, ElementClickInterceptedException) as e_path:
-                    print(f"Não conseguiu clicar no PATH do primeiro elemento: {e_path}")
-                    print("Tentando clicar no primeiro elemento via JavaScript (último recurso)...")
-                    try:
-                        # Tenta via JavaScript no DIV
-                        js_selector_first = "return document.evaluate(\"//div[@aria-label='Navegação na página . Dados População Painel']\", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;"
-                        element_js = driver.execute_script(js_selector_first)
-                        if element_js:
-                            driver.execute_script("arguments[0].click();", element_js)
-                            print(f"Clicou no primeiro elemento (JavaScript) com seletor: {selector_first_element_div}")
-                        else:
-                            raise NoSuchElementException("Elemento JavaScript não encontrado para o primeiro clique.")
-                    except Exception as e_js:
-                        print(f"Erro fatal: Não conseguiu clicar no primeiro elemento mesmo via JavaScript: {e_js}")
-                        raise # Re-lança a exceção para que a captura de tela seja feita
-
-            # --- ESPERA POR CARREGAMENTO APÓS O PRIMEIRO CLIQUE ---
-            print("\nPrimeiro clique realizado. Aguardando a página carregar (esperando spinner desaparecer)...")
-            try:
-                # Espera que o spinner esteja visível e depois espera que ele desapareça
-                WebDriverWait(driver, 10).until(EC.visibility_of_element_located(SPINNER_SELECTOR))
-                print("Spinner detectado. Esperando que ele se torne invisível...")
-                WebDriverWait(driver, 30).until(EC.invisibility_of_element_located(SPINNER_SELECTOR))
-                print("Spinner invisível. Página carregada.")
-            except TimeoutException:
-                print("Spinner não detectado ou não desapareceu a tempo (pode não haver um ou o seletor está errado). Prosseguindo com espera fixa.")
-                time.sleep(10) # Fallback para uma espera fixa se o spinner não for encontrado/desaparecer
-
-            # --- SEGUNDO CLIQUE (Indicador . Clique aqui para seguir link) ---
-            print("\nTentando clicar no segundo elemento (botão Indicador)...")
-            selector_second_element_div = "//div[@aria-label='Indicador . Clique aqui para seguir link']"
-            selector_second_element_path = "//div[@aria-label='Indicador . Clique aqui para seguir link']//path[@data-sub-selection-object-name='tile_default']"
-
-            # Nova estratégia: Tentar ActionChains primeiro para simular um clique mais "real"
-            try:
-                print("Tentando clicar no segundo elemento via ActionChains (simulação de clique real)...")
-                # Primeiro, esperamos que o DIV pai esteja presente no DOM (não necessariamente clicável)
-                element_for_action = WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, selector_second_element_div))
-                )
-                ActionChains(driver).move_to_element(element_for_action).click().perform()
-                print(f"Clicou no segundo elemento (ActionChains) usando seletor: {selector_second_element_div}")
-                # NÃO HÁ PAUSA FIXA AQUI, ESPERAMOS O PRÓXIMO CARREGAMENTO
-            
-            except (TimeoutException, NoSuchElementException, ElementClickInterceptedException) as e_action_chains:
-                print(f"Não conseguiu clicar no segundo elemento via ActionChains: {e_action_chains}")
-                
-                # Se ActionChains falhar, volta para a estratégia anterior (JavaScript > PATH > DIV)
-                print("Voltando para tentativas JavaScript/Selenium para o segundo elemento...")
-                try:
-                    # TENTA VIA JAVASCRIPT
-                    print("Tentando clicar no segundo elemento via JavaScript (fallback 1)...")
-                    js_selector_second = "return document.evaluate(\"//div[@aria-label='Indicador . Clique aqui para seguir link']\", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;"
-                    element_js_2 = WebDriverWait(driver, 10).until(
-                        lambda d: d.execute_script(js_selector_second) # Espera até que o elemento esteja presente no DOM via JS
-                    )
-                    if element_js_2:
-                        driver.execute_script("arguments[0].click();", element_js_2)
-                        print(f"Clicou no segundo elemento (JavaScript) com seletor: {selector_second_element_div}")
-                    else:
-                        raise NoSuchElementException("Elemento JavaScript não encontrado para o segundo clique (fallback 1).")
-
-                except (TimeoutException, NoSuchElementException) as e_js_2_fallback:
-                    print(f"Não conseguiu clicar no segundo elemento via JavaScript (fallback 1): {e_js_2_fallback}")
-                    print("Tentando clicar no PATH do segundo elemento como último recurso (Selenium)...")
-                    try:
-                        # Tenta o PATH
-                        element_to_click_2 = WebDriverWait(driver, 10).until(
-                            EC.element_to_be_clickable((By.XPATH, selector_second_element_path))
-                        )
-                        element_to_click_2.click()
-                        print(f"Clicou no segundo elemento (PATH) com seletor: {selector_second_element_path}")
-                    except Exception as e_path_2_final:
-                        print(f"Erro fatal: Não conseguiu clicar no segundo elemento mesmo via PATH (Selenium): {e_path_2_final}")
-                        raise # Re-lança a exceção para que a captura de tela seja feita
-
-            # --- ESPERA POR CARREGAMENTO APÓS O SEGUNDO CLIQUE (se aplicável) ---
-            print("\nSegundo clique realizado. Aguardando a página carregar (esperando spinner desaparecer, se houver)...")
-            try:
-                WebDriverWait(driver, 10).until(EC.visibility_of_element_located(SPINNER_SELECTOR))
-                print("Spinner detectado. Esperando que ele se torne invisível...")
-                WebDriverWait(driver, 30).until(EC.invisibility_of_element_located(SPINNER_SELECTOR))
-                print("Spinner invisível. Página carregada após o segundo clique.")
-            except TimeoutException:
-                print("Spinner não detectado ou não desapareceu a tempo após o segundo clique. Prosseguindo.")
-                time.sleep(5) # Pequena pausa de fallback
-
-            # --- TERCEIRO CLIQUE (Elemento visual-container específico) ---
-            print("\nTentando clicar no terceiro elemento (visual-container específico)...")
-            
-            # Aguarda um pouco mais para garantir que o elemento apareça após os cliques anteriores
-            print("Aguardando 3 segundos para o elemento aparecer...")
-            time.sleep(3)
-            
-            # Debug: Verificar quais elementos estão disponíveis na página
-            print("Verificando elementos disponíveis na página...")
-            try:
-                # Verifica elementos visual-container
-                visual_containers = driver.find_elements(By.XPATH, "//visual-container")
-                print(f"Encontrados {len(visual_containers)} elementos visual-container")
-                
-                # Verifica elementos com data-testid
-                testid_elements = driver.find_elements(By.XPATH, "//*[@data-testid='visual-container']")
-                print(f"Encontrados {len(testid_elements)} elementos com data-testid='visual-container'")
-                
-                # Verifica elementos com role='group'
-                group_elements = driver.find_elements(By.XPATH, "//*[@role='group']")
-                print(f"Encontrados {len(group_elements)} elementos com role='group'")
-                
-                # Lista os primeiros elementos encontrados para debug
-                for i, elem in enumerate(visual_containers[:3]):
-                    try:
-                        aria_label = elem.get_attribute("aria-label") or "N/A"
-                        class_attr = elem.get_attribute("class") or "N/A"
-                        print(f"  Visual-container {i+1}: aria-label='{aria_label}', class='{class_attr[:50]}...'")
-                    except:
-                        pass
-                        
-            except Exception as e:
-                print(f"Erro ao verificar elementos: {e}")
-            
-            # Múltiplos seletores para tentar encontrar o elemento (evitando confusão com o segundo)
-            selectors_to_try = [
-                "//visual-container//div[@data-testid='visual-container']",
-                "//div[@data-testid='visual-container']",
-                "//visual-container//div[@role='group' and @tabindex='0']",
-                "//div[@role='group' and @tabindex='0']",
-                "//visual-container//div[@class='visualContainer unselectable readMode hideBorder paddingDisabled noVisualTitle visualHeaderAbove droppableElement ui-droppable']",
-                "//div[@class='visualContainer unselectable readMode hideBorder paddingDisabled noVisualTitle visualHeaderAbove droppableElement ui-droppable']",
-                "//visual-container//div[contains(@class, 'visualContainer')]",
-                "//div[contains(@class, 'visualContainer')]",
-                "//visual-container//div[@data-sub-selection-object-name='visual-area']",
-                "//div[@data-sub-selection-object-name='visual-area']",
-                "//visual-container//div[@data-sub-selection-display-name='Visual_Area']",
-                "//div[@data-sub-selection-display-name='Visual_Area']",
-                # Seletores mais genéricos como último recurso
-                "//visual-container//div[contains(@class, 'visualContainer') and not(@aria-label='Indicador . Clique aqui para seguir link')]",
-                "//div[contains(@class, 'visualContainer') and not(@aria-label='Indicador . Clique aqui para seguir link')]",
-                "//visual-container//div[@role='group' and not(@aria-label='Indicador . Clique aqui para seguir link')]",
-                "//div[@role='group' and not(@aria-label='Indicador . Clique aqui para seguir link')]"
-            ]
-            
-            third_click_success = False
-            for i, selector in enumerate(selectors_to_try):
-                if third_click_success:
-                    break
-                    
-                print(f"Tentativa {i+1}: Usando seletor: {selector}")
-                try:
-                    # Espera que o elemento esteja presente
-                    element_to_click_3 = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located((By.XPATH, selector))
-                    )
-                    
-                    # Tenta clicar via ActionChains primeiro
-                    try:
-                        ActionChains(driver).move_to_element(element_to_click_3).click().perform()
-                        print(f"Clicou no terceiro elemento (ActionChains) com seletor: {selector}")
-                        third_click_success = True
-                        break
-                    except Exception as e_action:
-                        print(f"ActionChains falhou: {e_action}")
-                        
-                        # Tenta clicar normal
-                        try:
-                            element_to_click_3.click()
-                            print(f"Clicou no terceiro elemento (Selenium) com seletor: {selector}")
-                            third_click_success = True
-                            break
-                        except Exception as e_click:
-                            print(f"Clique normal falhou: {e_click}")
-                            
-                            # Tenta via JavaScript
-                            try:
-                                driver.execute_script("arguments[0].click();", element_to_click_3)
-                                print(f"Clicou no terceiro elemento (JavaScript) com seletor: {selector}")
-                                third_click_success = True
-                                break
-                            except Exception as e_js:
-                                print(f"JavaScript falhou: {e_js}")
-                                continue
-                                
-                except (TimeoutException, NoSuchElementException) as e:
-                    print(f"Elemento não encontrado com seletor {selector}: {e}")
-                    continue
-            
-            if not third_click_success:
-                print("Erro fatal: Não conseguiu clicar no terceiro elemento com nenhuma estratégia.")
-                raise NoSuchElementException("Terceiro elemento não encontrado ou não clicável.")
-
-            # --- ESPERA POR CARREGAMENTO APÓS O TERCEIRO CLIQUE (se aplicável) ---
-            print("\nTerceiro clique realizado. Aguardando a página carregar (esperando spinner desaparecer, se houver)...")
-            try:
-                WebDriverWait(driver, 10).until(EC.visibility_of_element_located(SPINNER_SELECTOR))
-                print("Spinner detectado. Esperando que ele se torne invisível...")
-                WebDriverWait(driver, 30).until(EC.invisibility_of_element_located(SPINNER_SELECTOR))
-                print("Spinner invisível. Página carregada após o terceiro clique.")
-            except TimeoutException:
-                print("Spinner não detectado ou não desapareceu a tempo após o terceiro clique. Prosseguindo.")
-                time.sleep(5) # Pequena pausa de fallback
-
+            ActionChains(driver).move_to_element(element_to_click_1).double_click().perform()
+            print("Duplo clique realizado no visual-container com aria-label específico.")
         except Exception as e:
-            # Captura exceções gerais ou re-lançadas das tentativas de clique
-            print(f"Erro geral durante as interacoes na dashboard: {e}")
-            print("Verifique se os seletores estão corretos e se os elementos estão visíveis e clicáveis no momento do script.")
-            
-            # --- Adicionado para depuração ---
+            print(f"Duplo clique ActionChains falhou: {e}. Tentando dois cliques simples via JavaScript...")
             try:
-                screenshot_filename = f"erro_clique_{time.strftime('%Y%m%d-%H%M%S')}.png"
-                driver.save_screenshot(screenshot_filename)
-                print(f"Captura de tela salva em: {screenshot_filename}")
-            except Exception as ss_e:
-                print(f"Erro ao salvar captura de tela: {ss_e}")
-            # --- Fim da adição para depuração ---
+                driver.execute_script("arguments[0].click();", element_to_click_1)
+                time.sleep(0.2)
+                driver.execute_script("arguments[0].click();", element_to_click_1)
+                print("Dois cliques simples via JavaScript realizados no visual-container.")
+            except Exception as e2:
+                print(f"Também falhou via JavaScript: {e2}")
+    except Exception as e:
+        print(f"Não foi possível encontrar ou clicar no visual-container: {e}")
+    time.sleep(5)
 
+    # === SEGUNDO CLIQUE ===
+    # Elemento: <g id='container03dbb183-4402-afb1-cac3-33078831b513'>
+    selector_second_element = "//g[@id='container03dbb183-4402-afb1-cac3-33078831b513']"
+    try:
+        element_to_click_2 = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, selector_second_element))
+        )
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element_to_click_2)
+        try:
+            ActionChains(driver).move_to_element(element_to_click_2).double_click().perform()
+            print("Duplo clique realizado no segundo elemento <g> pelo id.")
+        except Exception as e:
+            print(f"Duplo clique ActionChains falhou: {e}. Tentando dois cliques simples via JavaScript...")
+            try:
+                driver.execute_script("arguments[0].click();", element_to_click_2)
+                time.sleep(0.2)
+                driver.execute_script("arguments[0].click();", element_to_click_2)
+                print("Dois cliques simples via JavaScript realizados no segundo elemento <g>.")
+            except Exception as e2:
+                print(f"Também falhou via JavaScript: {e2}")
+    except Exception as e:
+        print(f"Não foi possível encontrar ou clicar no segundo elemento <g>: {e}")
+    time.sleep(2)
+
+    # === TERCEIRA INTERAÇÃO: CLICA NO GRUPO <g class='tile'> PAI DO PATH ===
+    # Elemento: <g class='tile'> que contém o <path data-sub-selection-object-name='tile_default' data-sub-selection-display-name='Card_Background_Color'>
+    selector_tile_group = "//g[@class='tile' and path[@data-sub-selection-object-name='tile_default' and @data-sub-selection-display-name='Card_Background_Color']]"
+    elements_found_tile = driver.find_elements(By.XPATH, selector_tile_group)
+    print(f"Encontrados {len(elements_found_tile)} elementos para o terceiro clique.")
+    for idx, el in enumerate(elements_found_tile):
+        print(f"Elemento {idx+1}: exibido={{el.is_displayed()}}, habilitado={{el.is_enabled()}}")
+    if not elements_found_tile:
+        with open('debug_dashboard.html', 'w', encoding='utf-8') as f:
+            f.write(driver.page_source)
+        print('HTML da página salvo em debug_dashboard.html')
     else:
-        print("Nenhuma interação específica configurada para esta dashboard.")
+        try:
+            element_to_click_tile = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, selector_tile_group))
+            )
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element_to_click_tile)
+            ActionChains(driver).move_to_element(element_to_click_tile).double_click().perform()
+            print("Duplo clique realizado no grupo <g class='tile'> do SVG.")
+        except Exception as e:
+            print(f"Não foi possível dar duplo clique no grupo <g class='tile'>: {e}")
+            # Tenta via JavaScript
+            try:
+                driver.execute_script("arguments[0].click();", element_to_click_tile)
+                print("Clique via JavaScript realizado no grupo <g class='tile'>.")
+            except Exception as e2:
+                print(f"Também falhou via JavaScript: {e2}")
+        time.sleep(2)
+
+    # --- TERCEIRO CLIQUE (opcional, se necessário) ---
+    # Adicione aqui se precisar de mais interações
 
 
 def visualizar_dashboards_com_enter(urls, intervalo_segundos=60, driver_path='msedgedriver.exe', zoom_level=100):
