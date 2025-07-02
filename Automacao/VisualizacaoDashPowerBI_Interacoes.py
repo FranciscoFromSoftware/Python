@@ -13,87 +13,114 @@ from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementClickInterceptedException
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 import time
-import threading
-import msvcrt # Importa a biblioteca msvcrt (apenas para Windows)
+import pyautogui
+import signal
+import sys
 
-# Variável global para controlar o loop principal
+# Variável global para controlar o loop principala
 fechar_navegador = False
 
-def monitorar_tecla_enter_msvcrt():
-    """
-    Função que monitora o pressionar da tecla 'Enter' usando msvcrt.
-    Define a variável global 'fechar_navegador' como True quando 'Enter' é pressionado.
-    """
-    print("\nMonitorando a tecla 'Enter'... Pressione ENTER para fechar o navegador.")
-    
-    while True:
-        if msvcrt.kbhit():
-            key = msvcrt.getch()
-            if key == b'\r': # '\r' é o byte para a tecla Enter no Windows
-                global fechar_navegador
-                fechar_navegador = True
-                print("Tecla 'Enter' detectada. Preparando para fechar o navegador.")
-                break
-        time.sleep(0.1)
+def clicar_posicao_absoluta(driver, element, offset_y=0):
+    """Move o mouse suavemente para a posição do elemento usando porcentagens da tela. Permite ajuste vertical (offset_y)."""
+    screen_width, screen_height = pyautogui.size()
+    location = element.location_once_scrolled_into_view
+    size = element.size
+    x_element = location['x'] + size['width'] // 2
+    y_element = location['y'] + size['height'] // 2 + offset_y
+    rect = driver.get_window_rect()
+    x_window = rect['x']
+    y_window = rect['y']
+    window_width = rect['width']
+    window_height = rect['height']
+    x_abs = x_window + x_element
+    y_abs = y_window + y_element
+    x_percent = (x_abs / screen_width) * 100
+    y_percent = (y_abs / screen_height) * 100
+    print(f"Movendo mouse suavemente para: ({x_abs}, {y_abs}) - Porcentagens: ({x_percent:.1f}%, {y_percent:.1f}%)")
+    pyautogui.moveTo(x_abs, y_abs, duration=0.5)
+    pyautogui.click()
 
 def realizar_interacoes_dashboard(driver, url_atual):
-    """
-    Função para adicionar interações de clique específicas em uma dashboard.
-    Você customizará esta função para cada dashboard/página se precisar de cliques diferentes.
-
-    Args:
-        driver (webdriver.Edge): A instância do WebDriver Edge.
-        url_atual (str): A URL da dashboard que está sendo exibida.
-    """
     print(f"Tentando realizar interacoes na dashboard: {url_atual}")
 
-    # **SELETOR PARA O SPINNER DO POWER BI**
-    # Este seletor pode precisar ser ajustado. Inspecione o HTML quando a página estiver carregando.
-    # Procure por divs ou outros elementos que indiquem "carregando".
-    SPINNER_SELECTOR = (By.CSS_SELECTOR, "div.powerbi-spinner[data-testid='spinner']")
-    
-    if "reportId=4f3676e5-ac8c-4d39-82e8-90bddfecc24f" in url_atual: 
-        print("Interagindo com a dashboard (reportId=4f3676e5-ac8c-4d39-82e8-90bddfecc24f)...")
+    # 1º clique: Selenium no elemento real
+    try:
+        selector = "//transform[@data-testid='visual-container']//div[@aria-label='Navegação na página . Dados População Painel']"
+        element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, selector))
+        )
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
         try:
-            # --- PRIMEIRO CLIQUE ---
-            print("Tentando clicar no tile do container9e609888-f796-bd52-6232-d7ed0bbfd3fa...")
-            selector_first_tile = "//*[name()='g' and @id='container9e609888-f796-bd52-6232-d7ed0bbfd3fa']/*[name()='g' and @class='tile' and @cursor='pointer']"
-            try:
-                element_to_click_1 = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.XPATH, selector_first_tile))
-                )
-                element_to_click_1.click()
-                print("Clique realizado no primeiro tile.")
-            except Exception as e:
-                print(f"Não foi possível clicar no primeiro tile: {e}")
-            time.sleep(5)
-
-            # --- SEGUNDO CLIQUE ---
-            print("Tentando clicar no tile do containera0f15145-f3de-0b6e-5688-53b57360677e...")
-            selector_second_tile = "//*[name()='g' and @id='containera0f15145-f3de-0b6e-5688-53b57360677e']/*[name()='g' and @class='tile' and @cursor='pointer']"
-            try:
-                element_to_click_2 = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.XPATH, selector_second_tile))
-                )
-                element_to_click_2.click()
-                print("Clique realizado no segundo tile.")
-            except Exception as e:
-                print(f"Não foi possível clicar no segundo tile: {e}")
-            time.sleep(5)
-
-            # --- TERCEIRO CLIQUE (opcional, se necessário) ---
-            # Adicione aqui se precisar de mais interações
-
+            ActionChains(driver).move_to_element(element).click().perform()
+            print(f"Clique 1 realizado com ActionChains.")
         except Exception as e:
-            print(f"Erro geral durante as interações na dashboard: {e}")
+            print(f"ActionChains falhou no clique 1: {e}. Tentando via JavaScript...")
+            try:
+                driver.execute_script("arguments[0].click();", element)
+                print(f"Clique 1 realizado via JavaScript.")
+            except Exception as e2:
+                print(f"Também falhou via JavaScript no clique 1: {e2}")
+    except Exception as e:
+        print(f"Não foi possível encontrar ou clicar no elemento do clique 1: {e}")
+    time.sleep(2)
 
-    else:
-        print("Nenhuma interação específica configurada para esta dashboard.")
+    # 2º clique: posição do mouse baseada em elemento de referência
+    try:
+        selector2 = "//div[contains(@class, 'vcBody') and @data-sub-selection-object-name='visual-area' and @data-sub-selection-display-name='Visual_Area']"
+        element2 = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, selector2))
+        )
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element2)
+        location = element2.location_once_scrolled_into_view
+        size = element2.size
+        x = location['x'] + size['width'] // 2
+        y = location['y'] + size['height'] // 2
+        ActionChains(driver).move_by_offset(x, y).click().perform()
+        print(f"Clique 2 realizado pelas coordenadas absolutas do mouse ({x}, {y}).")
+        ActionChains(driver).move_by_offset(-x, -y).perform()  # volta o mouse
+    except Exception as e:
+        print(f"Não foi possível encontrar ou clicar no elemento do clique 2: {e}")
+    time.sleep(2)
 
+    # 3º clique: 80% x, 30.5% y da tela
+    screen_width, screen_height = pyautogui.size()
+    x_abs = int(screen_width * 0.84)
+    y_abs = int(screen_height * 0.31)
+    print(f"Movendo mouse para 83% x, 30% y: ({x_abs}, {y_abs})")
+    pyautogui.moveTo(x_abs, y_abs, duration=0.5)
+    pyautogui.doubleClick()
+    time.sleep(2)
+    pyautogui.click()
+    print(f"Clique 3 realizado (duplo clique) em 80% x, 30.5% y da tela.")
+    time.sleep(2)
+
+    # 4º clique: 68% x, 20% y da tela
+    x_abs = int(screen_width * 0.54)
+    y_abs = int(screen_height * 0.56)
+    print(f"Movendo mouse para 68% x, 20% y: ({x_abs}, {y_abs})")
+    pyautogui.moveTo(x_abs, y_abs, duration=0.5)
+    pyautogui.click()
+    print(f"Clique 4 realizado em 68% x, 20% y da tela.")
+    time.sleep(2)
+
+def encerrar_programa(signum, frame):
+    """Função para encerrar o programa de forma limpa."""
+    global fechar_navegador
+    print("\nRecebido sinal de encerramento. Finalizando programa...")
+    fechar_navegador = True
+    sys.exit(0)
+
+def verificar_janela_fechada(driver):
+    """Verifica se a janela do navegador foi fechada manualmente."""
+    try:
+        # Tenta acessar uma propriedade da janela
+        driver.current_url
+        return False
+    except:
+        print("\nJanela do navegador foi fechada. Encerrando programa...")
+        return True
 
 def visualizar_dashboards_com_enter(urls, intervalo_segundos=60, driver_path='msedgedriver.exe', zoom_level=100):
     """Função para visualizar dashboards do Power BI em um loop contínuo.
@@ -106,10 +133,6 @@ def visualizar_dashboards_com_enter(urls, intervalo_segundos=60, driver_path='ms
     if not urls:
         print("Nenhuma URL fornecida. Adicione as URLs das suas dashboards à lista.")
         return
-
-    monitor_thread = threading.Thread(target=monitorar_tecla_enter_msvcrt)
-    monitor_thread.daemon = True
-    monitor_thread.start()
 
     service = Service(executable_path=driver_path)
     options = Options()
@@ -146,6 +169,11 @@ def visualizar_dashboards_com_enter(urls, intervalo_segundos=60, driver_path='ms
         while not fechar_navegador:
             for i, url in enumerate(urls):
                 if fechar_navegador:
+                    break
+                
+                # Verifica se a janela foi fechada
+                if verificar_janela_fechada(driver):
+                    fechar_navegador = True
                     break
 
                 print(f"\nNavegando para dashboard/página {i+1}: {url}")
@@ -210,4 +238,7 @@ powerbi_dashboard_urls = [
 
 # --- EXECUÇÃO DO SCRIPT ---
 if __name__ == "__main__":
+    # Configura o handler para Ctrl+C
+    signal.signal(signal.SIGINT, encerrar_programa)
+    print("Pressione Ctrl+C para encerrar o programa a qualquer momento.")
     visualizar_dashboards_com_enter(powerbi_dashboard_urls, intervalo_segundos=60, driver_path='msedgedriver.exe', zoom_level=100)
