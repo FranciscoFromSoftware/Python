@@ -1,0 +1,517 @@
+[
+    {
+        "timestamp_end": "2025-07-02T22:33:14.583558",
+        "application_or_url": "Meu_Dia.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:33:29.588923",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 15.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:33:34.592333",
+        "application_or_url": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\python3.11.exe",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:33:39.596578",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:33:49.600973",
+        "application_or_url": "Meu_Projeto – Explorador de Arquivos",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:33:59.604791",
+        "application_or_url": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\python3.11.exe",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:34:04.608183",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:34:19.612815",
+        "application_or_url": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\python3.11.exe",
+        "duration_seconds": 15.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:34:24.616025",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:34:29.618893",
+        "application_or_url": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\python3.11.exe",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:34:44.623296",
+        "application_or_url": "Meu_Projeto – Explorador de Arquivos",
+        "duration_seconds": 15.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:34:49.625871",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:34:54.628435",
+        "application_or_url": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\python3.11.exe",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:34:59.631284",
+        "application_or_url": "",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:35:04.634390",
+        "application_or_url": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\python3.11.exe",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:37:39.658490",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 155.02
+    },
+    {
+        "timestamp_end": "2025-07-02T22:37:49.662005",
+        "application_or_url": "Sistema de Monitoramento de Atividade",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:37:59.665073",
+        "application_or_url": "Configuração do Banco de Dados",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:38:14.669417",
+        "application_or_url": "Erro",
+        "duration_seconds": 15.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:38:49.676664",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 35.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:38:54.679440",
+        "application_or_url": "",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:38:59.682443",
+        "application_or_url": "MySQL Workbench",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:39:04.685436",
+        "application_or_url": "Erro",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:39:09.688355",
+        "application_or_url": "Configuração do Banco de Dados",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:39:24.692638",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 15.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:39:34.696036",
+        "application_or_url": "Erro",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:40:34.706484",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 60.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:40:49.711723",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:40:59.719479",
+        "application_or_url": "Sistema de Monitoramento de Atividade",
+        "duration_seconds": 10.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:41:04.724185",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:41:09.727265",
+        "application_or_url": "Erro",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:41:14.730261",
+        "application_or_url": "Sucesso",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:41:19.733388",
+        "application_or_url": "Sistema de Monitoramento de Atividade",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:44:44.761997",
+        "application_or_url": "Interface_Monitoramento.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 205.03
+    },
+    {
+        "timestamp_end": "2025-07-02T22:44:54.766332",
+        "application_or_url": "requirements_exe.txt - Xscient (Workspace) - Cursor",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:48:34.799122",
+        "application_or_url": "Meu_Dia.py - Xscient (Workspace) - Cursor",
+        "duration_seconds": 220.03
+    },
+    {
+        "timestamp_end": "2025-07-02T22:48:39.801869",
+        "application_or_url": "Sistema de Monitoramento de Atividade",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:48:54.805926",
+        "application_or_url": "C:\\WINDOWS\\system32\\cmd.exe",
+        "duration_seconds": 15.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:49:19.812310",
+        "application_or_url": "Sistema de Monitoramento de Atividade",
+        "duration_seconds": 25.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:49:24.815532",
+        "application_or_url": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\python3.11.exe",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:49:29.819235",
+        "application_or_url": "Meu_Projeto – Explorador de Arquivos",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:49:34.822415",
+        "application_or_url": "Sistema de Monitoramento de Atividade",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:49:44.827264",
+        "application_or_url": "Meu_Projeto – Explorador de Arquivos",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:49:49.830561",
+        "application_or_url": "Meu_Dia.py - Xscient (Workspace) - Visual Studio Code",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:50:09.836084",
+        "application_or_url": "Meu_Projeto – Explorador de Arquivos",
+        "duration_seconds": 20.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:50:14.840098",
+        "application_or_url": "__pycache__ – Explorador de Arquivos",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:50:24.844518",
+        "application_or_url": "",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:51:09.853453",
+        "application_or_url": "Abrir com…",
+        "duration_seconds": 45.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:51:14.857260",
+        "application_or_url": "",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:51:24.861654",
+        "application_or_url": "Pesquisar",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:51:34.865908",
+        "application_or_url": "Arquivos de Instalação – Explorador de Arquivos",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:52:09.873424",
+        "application_or_url": "Pesquisar",
+        "duration_seconds": 35.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:52:19.877630",
+        "application_or_url": "Meu_Dia.py - Xscient (Workspace) - Visual Studio Code",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:52:24.881012",
+        "application_or_url": "Python 3.13.2 (64-bit) Setup",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:52:29.884784",
+        "application_or_url": "Meu_Dia.py - Xscient (Workspace) - Visual Studio Code",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:52:39.889005",
+        "application_or_url": "Pesquisar",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:52:54.893184",
+        "application_or_url": "Python 3.13.2 (64-bit) Setup",
+        "duration_seconds": 15.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:52:59.896793",
+        "application_or_url": "__pycache__ – Explorador de Arquivos",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:53:14.901488",
+        "application_or_url": "Python 3.13.2 (64-bit) Setup",
+        "duration_seconds": 15.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:53:24.906027",
+        "application_or_url": "Meu_Dia.py - Xscient (Workspace) - Visual Studio Code",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:53:44.911676",
+        "application_or_url": "WhatsApp",
+        "duration_seconds": 20.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:53:49.915074",
+        "application_or_url": "__pycache__ – Explorador de Arquivos",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:53:59.918962",
+        "application_or_url": "Python 3.13.2 (64-bit) Setup",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:54:09.923480",
+        "application_or_url": "__pycache__ – Explorador de Arquivos",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:54:14.927194",
+        "application_or_url": "",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:54:34.933723",
+        "application_or_url": "__pycache__ – Explorador de Arquivos",
+        "duration_seconds": 20.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:54:49.938503",
+        "application_or_url": "Pesquisar",
+        "duration_seconds": 15.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:55:04.943893",
+        "application_or_url": "Microsoft Store",
+        "duration_seconds": 15.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:55:14.947857",
+        "application_or_url": "Meu_Dia.py - Xscient (Workspace) - Visual Studio Code",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:55:24.952233",
+        "application_or_url": "__pycache__ – Explorador de Arquivos",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T22:55:44.958180",
+        "application_or_url": "Meu_Projeto – Explorador de Arquivos",
+        "duration_seconds": 20.01
+    },
+    {
+        "timestamp_end": "2025-07-02T22:57:29.975288",
+        "application_or_url": "install_and_build.bat - Xscient (Workspace) - Cursor",
+        "duration_seconds": 105.02
+    },
+    {
+        "timestamp_end": "2025-07-02T23:02:10.012686",
+        "application_or_url": "requirements_monitoramento.txt - Xscient (Workspace) - Cursor",
+        "duration_seconds": 280.04
+    },
+    {
+        "timestamp_end": "2025-07-02T23:02:15.017044",
+        "application_or_url": "Meu_Projeto – Explorador de Arquivos",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:02:35.022593",
+        "application_or_url": "dist – Explorador de Arquivos",
+        "duration_seconds": 20.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:02:40.026320",
+        "application_or_url": "Sistema de Monitoramento de Atividade",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:02:45.030148",
+        "application_or_url": "Configuração do Banco de Dados",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:02:50.033617",
+        "application_or_url": "Sistema de Monitoramento de Atividade",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:03:00.037619",
+        "application_or_url": "dist – Explorador de Arquivos",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:03:10.042224",
+        "application_or_url": "(910) YouTube e mais 13 páginas - Trabalho — Microsoft​ Edge",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:03:35.050156",
+        "application_or_url": "(910) VINGADORES VS X MEN VS ETERNOS! DIA DE JULGAMENTO - HISTÓRIA COMPLETA! - YouTube e mais 13 páginas - Trabalho — Microsoft​ Edge",
+        "duration_seconds": 25.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:04:05.057631",
+        "application_or_url": "MySQL Workbench",
+        "duration_seconds": 30.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:04:10.061691",
+        "application_or_url": "Educação",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:04:15.066334",
+        "application_or_url": "(911) Como Criar um Gravador de Áudio com Python - YouTube e mais 2 páginas - Pessoal — Microsoft​ Edge",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:06:00.082009",
+        "application_or_url": "Google Gemini e mais 2 páginas - Pessoal — Microsoft​ Edge",
+        "duration_seconds": 105.02
+    },
+    {
+        "timestamp_end": "2025-07-02T23:06:20.088941",
+        "application_or_url": "MySQL Workbench",
+        "duration_seconds": 20.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:06:35.094684",
+        "application_or_url": "(910) VINGADORES VS X MEN VS ETERNOS! DIA DE JULGAMENTO - HISTÓRIA COMPLETA! - YouTube e mais 13 páginas - Trabalho — Microsoft​ Edge",
+        "duration_seconds": 15.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:06:40.098716",
+        "application_or_url": "Sobreposição da Ferramenta de Captura",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:07:50.110675",
+        "application_or_url": "WhatsApp",
+        "duration_seconds": 70.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:08:00.115521",
+        "application_or_url": "Sistema de Monitoramento de Atividade",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:08:10.120680",
+        "application_or_url": "dist – Explorador de Arquivos",
+        "duration_seconds": 10.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:08:30.126781",
+        "application_or_url": "",
+        "duration_seconds": 20.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:08:55.132525",
+        "application_or_url": "Propriedades de Meu_Dia",
+        "duration_seconds": 25.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:09:05.137161",
+        "application_or_url": "",
+        "duration_seconds": 10.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:09:30.143491",
+        "application_or_url": "Propriedades de Meu_Dia",
+        "duration_seconds": 25.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:09:35.147778",
+        "application_or_url": "Atributos Avançados",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:09:40.153117",
+        "application_or_url": "Meu_Dia.py - Xscient (Workspace) - Visual Studio Code",
+        "duration_seconds": 5.01
+    },
+    {
+        "timestamp_end": "2025-07-02T23:09:45.157606",
+        "application_or_url": "",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:20:15.240267",
+        "application_or_url": "Painel_Brasil",
+        "duration_seconds": 630.08
+    },
+    {
+        "timestamp_end": "2025-07-02T23:20:20.245266",
+        "application_or_url": "",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:20:25.249094",
+        "application_or_url": "requirements_monitoramento.txt - Xscient (Workspace) - Cursor",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:20:30.253194",
+        "application_or_url": "Meu_Dia.py - Xscient (Workspace) - Visual Studio Code",
+        "duration_seconds": 5.0
+    },
+    {
+        "timestamp_end": "2025-07-02T23:21:45.267518",
+        "application_or_url": ".gitignore - Xscient (Workspace) - Cursor",
+        "duration_seconds": 75.01
+    }
+]

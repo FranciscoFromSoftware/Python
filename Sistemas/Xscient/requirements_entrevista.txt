@@ -1,0 +1,4 @@
+pyaudio>=0.2.11
+pyautogui>=0.9.54
+Pillow>=9.0.0
+SpeechRecognition>=3.8.1 
