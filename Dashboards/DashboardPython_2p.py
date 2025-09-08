@@ -198,10 +198,40 @@ with map_container:
     df_pop_filtrado_mapa = df_pop_completo[df_pop_completo['Ano'] == int(ano_selecionado)][['Município', 'UF', 'Pessoas']].copy()
     df_pop_filtrado_mapa['MergeKey'] = df_pop_filtrado_mapa['Município'] + ' ' + df_pop_filtrado_mapa['UF']
 
+    # Calcular crescimento médio para cada município (para mostrar no hover do mapa)
+    df_crescimento_municipio = None
+    if len(anos_para_media) > 1:
+        df_crescimento_municipio = df_pop_completo[df_pop_completo['Ano'].isin(anos_para_media)].pivot_table(
+            index=['Município', 'UF'], columns='Ano', values='Pessoas'
+        ).reset_index()
+        df_crescimento_municipio['Crescimento_Acumulado_Pct'] = 0.0
+        
+        for i in range(len(anos_para_media) - 1):
+            ano_atual = anos_para_media[i+1]
+            ano_anterior = anos_para_media[i]
+            # Filtrar municípios que têm dados para ambos os anos
+            mask = (df_crescimento_municipio[ano_anterior] != 0) & (df_crescimento_municipio[ano_anterior].notna()) & (df_crescimento_municipio[ano_atual].notna())
+            df_crescimento_municipio = df_crescimento_municipio[mask].copy()
+            
+            if not df_crescimento_municipio.empty:
+                cresc_ano = ((df_crescimento_municipio[ano_atual] - df_crescimento_municipio[ano_anterior]) / df_crescimento_municipio[ano_anterior]) * 100
+                df_crescimento_municipio['Crescimento_Acumulado_Pct'] += cresc_ano
+        
+        # Calcular crescimento médio anual
+        df_crescimento_municipio['Crescimento_Medio_Anual_Pct'] = df_crescimento_municipio['Crescimento_Acumulado_Pct'] / (len(anos_para_media) - 1) if (len(anos_para_media) - 1) > 0 else 0
+        df_crescimento_municipio['MergeKey'] = df_crescimento_municipio['Município'] + ' ' + df_crescimento_municipio['UF']
+        df_crescimento_municipio = df_crescimento_municipio[['MergeKey', 'Crescimento_Medio_Anual_Pct']]
+
     # Merge dos DataFrames para o mapa
     df_map_data = None
     if df_pop_filtrado_mapa is not None and df_lat_lon_processed is not None:
         df_map_data = pd.merge(df_lat_lon_processed, df_pop_filtrado_mapa[['MergeKey', 'Pessoas']], on='MergeKey', how='left')
+        
+        # Adicionar dados de crescimento médio ao mapa
+        if df_crescimento_municipio is not None:
+            df_map_data = pd.merge(df_map_data, df_crescimento_municipio, on='MergeKey', how='left')
+            # Preencher valores nulos com 0 para municípios sem dados de crescimento
+            df_map_data['Crescimento_Medio_Anual_Pct'] = df_map_data['Crescimento_Medio_Anual_Pct'].fillna(0)
 
         # Novo: Filtrar por UF, se selecionado
         if uf_selecionada != "Todas":
@@ -219,6 +249,11 @@ with map_container:
                         Mapa Atualizado da População - Ano {ano_selecionado}
                     </div>
                 """, unsafe_allow_html=True)
+                # Preparar hover_data baseado na disponibilidade dos dados de crescimento
+                hover_data_dict = {'Pessoas': ':,.0f', 'Latitude': True, 'Longitude': True}
+                if 'Crescimento_Medio_Anual_Pct' in df_map_data.columns:
+                    hover_data_dict['Crescimento_Medio_Anual_Pct'] = ':.2f'
+                
                 fig_map = px.scatter_mapbox(
                     df_map_data,
                     lat="Latitude",
@@ -226,7 +261,7 @@ with map_container:
                     size="Pessoas",
                     color="Pessoas",
                     hover_name="Município",
-                    hover_data={'Pessoas': ':,.0f', 'Latitude': True, 'Longitude': True},
+                    hover_data=hover_data_dict,
                     color_continuous_scale='Viridis',
                     range_color=[0, 2000000],  # Escala ajustada para cidades com até 2 milhões
                     size_max=50,
@@ -242,6 +277,17 @@ with map_container:
                         "bearing": 0
                     },
                     margin={"r": 0, "t": 0, "l": 0, "b": 0}
+                )
+                
+                # Personalizar os rótulos do hover
+                fig_map.update_traces(
+                    hovertemplate="<b>%{hovertext}</b><br>" +
+                                  "População: %{marker.size:,.0f}<br>" +
+                                  ("Crescimento Médio Anual: %{customdata[0]:.2f}%<br>" if 'Crescimento_Medio_Anual_Pct' in df_map_data.columns else "") +
+                                  "Latitude: %{lat}<br>" +
+                                  "Longitude: %{lon}<br>" +
+                                  "<extra></extra>",
+                    customdata=df_map_data[['Crescimento_Medio_Anual_Pct']].values if 'Crescimento_Medio_Anual_Pct' in df_map_data.columns else None
                 )
                 st.plotly_chart(fig_map, use_container_width=True, config={'scrollZoom': True})
 
