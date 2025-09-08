@@ -57,7 +57,7 @@ if df_lat_lon is not None:
     df_lat_lon_processed['MergeKey'] = df_lat_lon_processed['Município'] + ' ' + df_lat_lon_processed['UF']
 
 # Adicione o header com título e filtros lado a lado
-cols_header = st.columns([0.4, 0.3, 0.3])
+cols_header = st.columns([0.3, 0.25, 0.25, 0.2])
 with cols_header[0]:
     st.markdown("<h2 style='font-size: 28px; font-weight: bold; color: #2E3B4E; text-align: left;'>Dashboard de População do Brasil</h2>", unsafe_allow_html=True)
 with cols_header[1]:
@@ -65,6 +65,12 @@ with cols_header[1]:
 with cols_header[2]:
     ufs_disponiveis = sorted(df_pop_completo['UF'].unique()) if df_pop_completo is not None else []
     uf_selecionada = st.selectbox("Selecione a UF", ["Todas"] + ufs_disponiveis)
+with cols_header[3]:
+    tipo_visualizacao = st.selectbox(
+        "Visualizar por:",
+        ["População Total", "Crescimento Médio"],
+        help="Escolha se deseja visualizar o mapa colorido por população total ou crescimento médio anual"
+    )
 
 # Adicionado para garantir que os dataframes foram carregados
 if df_pop_completo is None or df_lat_lon_processed is None:
@@ -232,6 +238,8 @@ with map_container:
             df_map_data = pd.merge(df_map_data, df_crescimento_municipio, on='MergeKey', how='left')
             # Preencher valores nulos com 0 para municípios sem dados de crescimento
             df_map_data['Crescimento_Medio_Anual_Pct'] = df_map_data['Crescimento_Medio_Anual_Pct'].fillna(0)
+            # Criar coluna para tamanho dos círculos (valores negativos = 0)
+            df_map_data['Crescimento_Size'] = df_map_data['Crescimento_Medio_Anual_Pct'].apply(lambda x: max(0, x))
 
         # Novo: Filtrar por UF, se selecionado
         if uf_selecionada != "Todas":
@@ -244,27 +252,57 @@ with map_container:
             df_map_data['Longitude'] = pd.to_numeric(df_map_data['Longitude'], errors='coerce')
 
             if not df_map_data.empty:
+                # Definir parâmetros baseados no tipo de visualização selecionado
+                if tipo_visualizacao == "População Total":
+                    color_column = "Pessoas"
+                    size_column = "Pessoas"
+                    color_scale = 'Viridis'
+                    range_color = [0, 2000000]
+                    titulo_mapa = f"Mapa da População - Ano {ano_selecionado}"
+                else:  # Crescimento Médio
+                    color_column = "Crescimento_Medio_Anual_Pct"
+                    size_column = "Crescimento_Size"  # Tamanho baseado no crescimento (valores negativos = 0)
+                    color_scale = [[0, 'blue'], [0.5, 'green'], [1, 'yellow']]  # Azul (baixo) -> Verde (médio) -> Amarelo (alto crescimento)
+                    # Calcular range dinâmico para crescimento
+                    if 'Crescimento_Medio_Anual_Pct' in df_map_data.columns:
+                        min_cresc = df_map_data['Crescimento_Medio_Anual_Pct'].min()
+                        max_cresc = df_map_data['Crescimento_Medio_Anual_Pct'].max()
+                        range_color = [min_cresc, max_cresc]
+                    else:
+                        range_color = [-5, 5]  # Range padrão
+                    titulo_mapa = f"Mapa do Crescimento Médio Anual - Até {ano_selecionado}"
+                
                 st.markdown(f"""
-                    <div style="background: linear-gradient(to right,  #fcbb45, #1c6144); color: #2E3B4E; font-size: 16px; padding: 5px; border-radius: 5px; text-align: left; width: 35%; margin-top: 20px; margin-bottom: 10px;">
-                        Mapa Atualizado da População - Ano {ano_selecionado}
+                    <div style="background: linear-gradient(to right,  #fcbb45, #1c6144); color: #2E3B4E; font-size: 16px; padding: 5px; border-radius: 5px; text-align: left; width: 50%; margin-top: 20px; margin-bottom: 10px;">
+                        {titulo_mapa}
                     </div>
                 """, unsafe_allow_html=True)
+                
                 # Preparar hover_data baseado na disponibilidade dos dados de crescimento
                 hover_data_dict = {'Pessoas': ':,.0f', 'Latitude': True, 'Longitude': True}
                 if 'Crescimento_Medio_Anual_Pct' in df_map_data.columns:
                     hover_data_dict['Crescimento_Medio_Anual_Pct'] = ':.2f'
                 
+                # Verificar se as colunas necessárias existem no DataFrame
+                if color_column not in df_map_data.columns or (tipo_visualizacao == "Crescimento Médio" and size_column not in df_map_data.columns):
+                    if tipo_visualizacao == "Crescimento Médio":
+                        st.warning("⚠️ Dados de crescimento médio não disponíveis. Mostrando apenas por população.")
+                        color_column = "Pessoas"
+                        size_column = "Pessoas"
+                        color_scale = 'Viridis'
+                        range_color = [0, 2000000]
+                
                 fig_map = px.scatter_mapbox(
                     df_map_data,
                     lat="Latitude",
                     lon="Longitude",
-                    size="Pessoas",
-                    color="Pessoas",
+                    size=size_column,
+                    color=color_column,
                     hover_name="Município",
                     hover_data=hover_data_dict,
-                    color_continuous_scale='Viridis',
-                    range_color=[0, 2000000],  # Escala ajustada para cidades com até 2 milhões
-                    size_max=50,
+                    color_continuous_scale=color_scale,
+                    range_color=range_color,
+                    size_max=25,  # Reduzido de 50 para 25
                     zoom=3.5,
                     height=600
                 )
@@ -279,15 +317,31 @@ with map_container:
                     margin={"r": 0, "t": 0, "l": 0, "b": 0}
                 )
                 
-                # Personalizar os rótulos do hover
+                # Personalizar os rótulos do hover baseado no tipo de visualização
+                if tipo_visualizacao == "População Total":
+                    hover_template = ("<b>%{hovertext}</b><br>" +
+                                    "População: %{marker.color:,.0f}<br>" +
+                                    ("Crescimento Médio Anual: %{customdata[0]:.2f}%<br>" if 'Crescimento_Medio_Anual_Pct' in df_map_data.columns else "") +
+                                    "Latitude: %{lat}<br>" +
+                                    "Longitude: %{lon}<br>" +
+                                    "<extra></extra>")
+                else:  # Crescimento Médio
+                    hover_template = ("<b>%{hovertext}</b><br>" +
+                                    "Crescimento Médio Anual: %{marker.color:.2f}%<br>" +
+                                    "População: %{customdata[0]:,.0f}<br>" +
+                                    "Latitude: %{lat}<br>" +
+                                    "Longitude: %{lon}<br>" +
+                                    "<extra></extra>")
+                
+                # Preparar customdata baseado no tipo de visualização
+                if tipo_visualizacao == "População Total":
+                    custom_data = df_map_data[['Crescimento_Medio_Anual_Pct']].values if 'Crescimento_Medio_Anual_Pct' in df_map_data.columns else None
+                else:  # Crescimento Médio
+                    custom_data = df_map_data[['Pessoas']].values
+                
                 fig_map.update_traces(
-                    hovertemplate="<b>%{hovertext}</b><br>" +
-                                  "População: %{marker.size:,.0f}<br>" +
-                                  ("Crescimento Médio Anual: %{customdata[0]:.2f}%<br>" if 'Crescimento_Medio_Anual_Pct' in df_map_data.columns else "") +
-                                  "Latitude: %{lat}<br>" +
-                                  "Longitude: %{lon}<br>" +
-                                  "<extra></extra>",
-                    customdata=df_map_data[['Crescimento_Medio_Anual_Pct']].values if 'Crescimento_Medio_Anual_Pct' in df_map_data.columns else None
+                    hovertemplate=hover_template,
+                    customdata=custom_data
                 )
                 st.plotly_chart(fig_map, use_container_width=True, config={'scrollZoom': True})
 
