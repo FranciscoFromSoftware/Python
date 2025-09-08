@@ -38,7 +38,7 @@ df_pop_raw = load_data(url_populacao)
 df_lat_lon = load_data(url_lat_lon)
 
 # Processamento dos dados de população
-anos_disponiveis = []
+anos_disponiveis = [] # Lista para armazenar anos disponíveis
 df_pop_completo = None
 if df_pop_raw is not None:
     df_pop_completo = df_pop_raw.copy()
