@@ -38,7 +38,7 @@ df_pop_raw = load_data(url_populacao)
 df_lat_lon = load_data(url_lat_lon)
 
 # Processamento dos dados de população
-anos_disponiveis = [] # Lista para armazenar anos disponíveis
+anos_disponiveis = []
 df_pop_completo = None
 if df_pop_raw is not None:
     df_pop_completo = df_pop_raw.copy()
@@ -202,7 +202,6 @@ with map_container:
     df_map_data = None
     if df_pop_filtrado_mapa is not None and df_lat_lon_processed is not None:
         df_map_data = pd.merge(df_lat_lon_processed, df_pop_filtrado_mapa[['MergeKey', 'Pessoas']], on='MergeKey', how='left')
-        df_map_data['Pessoas'] = df_map_data['Pessoas'].fillna(0)
 
         # Novo: Filtrar por UF, se selecionado
         if uf_selecionada != "Todas":
@@ -210,6 +209,7 @@ with map_container:
 
         # Converter 'Latitude' e 'Longitude' para numérico ANTES de plotar
         if df_map_data is not None:
+            df_map_data.dropna(subset=['Pessoas'], inplace=True) # Remove linhas sem dados de população
             df_map_data['Latitude'] = pd.to_numeric(df_map_data['Latitude'], errors='coerce')
             df_map_data['Longitude'] = pd.to_numeric(df_map_data['Longitude'], errors='coerce')
 
