@@ -8,7 +8,7 @@ import urllib.request
 st.set_page_config(layout="wide")
 
 # URLs das planilhas
-url_populacao = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTRajrcbWpLzBRpPAc4ffQba8yYwnyS7HaSmq98Hid9y8WBBW7nBJpyYkmHKMMoiDu4CvHv6v7Onm07/pub?output=csv"
+url_populacao = "https://docs.google.com/spreadsheets/d/1yH6Rvo5V5WYEDMiB7ViSLTZWWOlmYMer/export?format=csv"
 url_lat_lon = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRns5zrdUDwA4__xZCSoEquLiktvp-1DgDlbl9WxW9eKtuBk7ef6fQcPzVmhw305wST8iGJxksAi6U0/pub?gid=1077836227&single=true&output=csv"
 
 # Função para carregar dados com caching
@@ -65,6 +65,16 @@ with cols_header[1]:
 with cols_header[2]:
     ufs_disponiveis = sorted(df_pop_completo['UF'].unique()) if df_pop_completo is not None else []
     uf_selecionada = st.selectbox("Selecione a UF", ["Todas"] + ufs_disponiveis)
+
+# Adicionado para garantir que os dataframes foram carregados
+if df_pop_completo is None or df_lat_lon_processed is None:
+    st.warning("Não foi possível carregar os dados. O aplicativo não pode continuar.")
+    st.stop()
+
+# Adicionado para garantir que um ano foi selecionado
+if ano_selecionado is None:
+    st.warning("Nenhum ano disponível para seleção. O aplicativo não pode continuar.")
+    st.stop()
 
 # Container para o filtro e mapa
 map_container = st.container()
@@ -192,6 +202,7 @@ with map_container:
     df_map_data = None
     if df_pop_filtrado_mapa is not None and df_lat_lon_processed is not None:
         df_map_data = pd.merge(df_lat_lon_processed, df_pop_filtrado_mapa[['MergeKey', 'Pessoas']], on='MergeKey', how='left')
+        df_map_data['Pessoas'] = df_map_data['Pessoas'].fillna(0)
 
         # Novo: Filtrar por UF, se selecionado
         if uf_selecionada != "Todas":
